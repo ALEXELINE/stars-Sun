@@ -39,7 +39,18 @@
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-    <script>       
+    <script>
+        var config = {
+            earth: {
+                radius: 1,
+                vertexes: 25
+            },
+            moon: {
+                radius: 1,
+                vertexes: 25
+            }
+        };
+
         var createScene = function () {
             var scene = new BABYLON.Scene(engine);
             // var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0.5, 0.7, 5, new BABYLON.Vector3(5, 5, 10), scene);
@@ -51,10 +62,7 @@
             // camera.pinchDeltaPercentage = 0.01;
             // camera.wheelDeltaPercentage = 0.01;
 
-            var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(5, 0, -12), scene);
-			//camera.applyGravity = true;
-			camera.checkCollisions = true;
-			
+            var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(5, 0, -12), scene);	
 			camera.speed = 0.1;
 			camera.angularSensibility = 1500;
 			
@@ -66,15 +74,28 @@
         
             scene.clearColor = new BABYLON.Color3(0.0, 0.0, 0.0);
         
-            var planet = BABYLON.Mesh.CreateSphere("planet", 16, 5, scene);
-            planet.position = new BABYLON.Vector3(3, 3, 10);
+            //var planet = BABYLON.Mesh.CreateSphere("planet", 16, 5, scene);
+            var earth = BABYLON.Mesh.CreateSphere("planet", config.earth.vertexes, config.earth.radius, scene);
+            //earth.position = new BABYLON.Vector3(3, 3, 10);
+            earth.position = new BABYLON.Vector3(10, 0, 5);
+            earth.rotation.z = Math.PI;
             //planet.parent = sun;
             
-            var planetMaterial = new BABYLON.StandardMaterial("planetSurface", scene);
-            planetMaterial.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/earth.jpg", scene);
-            planet.material = planetMaterial
-            planet.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-            planet.material.specularColor = new BABYLON.Color3(0, 0, 0);
+            var planetMat = new BABYLON.StandardMaterial("planetSurface", scene);
+            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/earth.jpg", scene);
+            earth.material = planetMat
+            earth.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+            earth.material.specularColor = new BABYLON.Color3(0, 0, 0);
+
+            var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius/3, scene);
+            moon.parent = earth;
+            moon.position = new BABYLON.Vector3(1, 0, 1);
+
+            var moonMat = new BABYLON.StandardMaterial("moonMat", scene); //Материал Луны
+            moonMat.diffuseTexture = new BABYLON.Texture("textures/moon.jpg", scene); //задаем базовую текстуру
+            moonMat.bumpTexture = new BABYLON.Texture("textures/moon_bump.jpg", scene);
+            moonMat.specularTexture = new BABYLON.Texture("textures/moon_spec.jpg", scene);
+            moon.material = moonMat;
 
             var light = new BABYLON.PointLight("DirLight", new BABYLON.Vector3(0, 10, 0), scene);
 			light.diffuse = new BABYLON.Color3(1, 1, 1);
@@ -94,7 +115,7 @@
 			sMaterial.backFaceCulling = false;
 			//sMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/skybox", scene);
             //sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/BabylonJS_FirstScene/master/images/skybox/skybox", scene);
-            sMaterial.reflectionTexture = new BABYLON.CubeTexture("skybox/skybox", scene);
+            sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/skybox/skybox", scene);
 			sMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             sMaterial.disableLighting = true;
             
@@ -110,6 +131,7 @@
 
         engine.runRenderLoop(function () {
             if (scene) {
+                //earth.rotation.y += 0.001;
                 scene.render();
             }
         });
