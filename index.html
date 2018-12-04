@@ -46,7 +46,7 @@
                 vertexes: 25
             },
             moon: {
-                radius: 1,
+                radius: 0.2,
                 vertexes: 25
             }
         };
@@ -62,15 +62,23 @@
             // camera.pinchDeltaPercentage = 0.01;
             // camera.wheelDeltaPercentage = 0.01;
 
-            var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(5, 0, -12), scene);	
-			camera.speed = 0.1;
-			camera.angularSensibility = 1500;
+            // var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(5, 0, -12), scene);	
+			// camera.speed = 0.1;
+			// camera.angularSensibility = 1500;
 			
-			camera.keysUp = [90]; // Touche Z
-			camera.keysDown = [83]; // Touche S
-			camera.keysLeft = [81]; // Touche Q
-			camera.keysRight = [68]; // Touche D;
-			scene.activeCamera.attachControl(canvas);
+			// camera.keysUp = [90]; // Touche Z
+			// camera.keysDown = [83]; // Touche S
+			// camera.keysLeft = [81]; // Touche Q
+			// camera.keysRight = [68]; // Touche D;
+            // scene.activeCamera.attachControl(canvas);
+            
+            var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, 3*Math.PI / 7, 110, new BABYLON.Vector3(55, 5, 55), scene);
+            scene.activeCamera = camera;
+            camera.attachControl(canvas, true);
+            camera.lowerRadiusLimit = 1.5;
+            camera.upperRadiusLimit = 10;
+            camera.pinchDeltaPercentage = 0.01;
+            camera.wheelDeltaPercentage = 0.01;
         
             scene.clearColor = new BABYLON.Color3(0.0, 0.0, 0.0);
         
@@ -82,20 +90,22 @@
             //planet.parent = sun;
             
             var planetMat = new BABYLON.StandardMaterial("planetSurface", scene);
-            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/earth.jpg", scene);
+            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/2k_earth_daymap.jpg", scene);
             earth.material = planetMat
             earth.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
             earth.material.specularColor = new BABYLON.Color3(0, 0, 0);
 
-            var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius/3, scene);
+            var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius, scene);
             moon.parent = earth;
-            moon.position = new BABYLON.Vector3(1, 0, 1);
+            moon.position = new BABYLON.Vector3(1, -0.5, 1);
 
-            var moonMat = new BABYLON.StandardMaterial("moonMat", scene); //Материал Луны
-            moonMat.diffuseTexture = new BABYLON.Texture("textures/moon.jpg", scene); //задаем базовую текстуру
-            moonMat.bumpTexture = new BABYLON.Texture("textures/moon_bump.jpg", scene);
-            moonMat.specularTexture = new BABYLON.Texture("textures/moon_spec.jpg", scene);
+            var moonMat = new BABYLON.StandardMaterial("moonMat", scene);
+            moonMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon.jpg", scene);
+            moonMat.bumpTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon_bump.jpg", scene);
+            moonMat.specularTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon_spec.jpg", scene);
             moon.material = moonMat;
+
+            camera.target = earth;
 
             var light = new BABYLON.PointLight("DirLight", new BABYLON.Vector3(0, 10, 0), scene);
 			light.diffuse = new BABYLON.Color3(1, 1, 1);
