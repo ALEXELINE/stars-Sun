@@ -21,7 +21,6 @@
         <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script> -->
-
         <style>
             html, body {
                 overflow: hidden;
@@ -72,14 +71,15 @@
             //planet.parent = sun;
             
             var planetMaterial = new BABYLON.StandardMaterial("planetSurface", scene);
-            planetMaterial.diffuseTexture = new BABYLON.Texture("textures/earth.jpg", scene);
+            planetMaterial.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/earth.jpg", scene);
             planet.material = planetMaterial
             planet.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
             planet.material.specularColor = new BABYLON.Color3(0, 0, 0);
 
-            var light0 = new BABYLON.PointLight("Omni0", planet.position, scene);
-            var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-            //light0.diffuse = new BABYLON.Color3(1, 1, 1);
+            var light = new BABYLON.PointLight("DirLight", new BABYLON.Vector3(0, 10, 0), scene);
+			light.diffuse = new BABYLON.Color3(1, 1, 1);
+			light.specular = new BABYLON.Color3(0.6, 0.6, 0.6);
+			light.intensity = 1.5;
 
             // Lets create a sun effect made of 3 different particle system
             // Definition: https://assets.babylonjs.com/particles/systems/sun.json
@@ -93,9 +93,11 @@
 			var sMaterial = new BABYLON.StandardMaterial("skyboxMaterial", scene);
 			sMaterial.backFaceCulling = false;
 			//sMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/skybox", scene);
-			sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/BabylonJS_FirstScene/master/images/skybox/skybox", scene);
+            //sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/BabylonJS_FirstScene/master/images/skybox/skybox", scene);
+            sMaterial.reflectionTexture = new BABYLON.CubeTexture("skybox/skybox", scene);
 			sMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-			
+            sMaterial.disableLighting = true;
+            
 			// Création d'un cube avec la material adaptée
 			var skybox = BABYLON.Mesh.CreateBox("skybox", 250, scene);
 			skybox.material = sMaterial;
