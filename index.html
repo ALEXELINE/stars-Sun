@@ -4,23 +4,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <title>Ici c'est le soleil</title>
-
-        <!-- Babylon.js -->
-        <!-- <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
-        <script src="https://preview.babylonjs.com/ammo.js"></script>
-        <script src="https://preview.babylonjs.com/cannon.js"></script>
-        <script src="https://preview.babylonjs.com/Oimo.js"></script>
-        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
-        <script src="https://preview.babylonjs.com/earcut.min.js"></script> -->
-        <script src="https://preview.babylonjs.com/babylon.js"></script>
-        <!-- <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script> -->
+        <!-- <script src="https://preview.babylonjs.com/babylon.js"></script> -->
+        <!-- <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script> -->
+        <script src="lib/underscore.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
         <style>
             html, body {
                 overflow: hidden;
@@ -40,6 +28,31 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
+        var catalog =[
+            {application: "DIORH", rapport: "arrivées 2014.rdl"},
+            {application: "DIORH", rapport: "arrivées 2015.rdl"},
+            {application: "DIORH", rapport: "arrivées 2016.rdl"},
+            {application: "DIORH", rapport: "DashBoard.rdl"},
+            {application: "DIORH", rapport: "départs 2015.rdl"},
+            {application: "DIORH", rapport: "départs 2016.rdl"},
+            {application: "DIORH", rapport: "DIORH_CUBE_TOP_10.rdl"},
+            {application: "DIORH", rapport: "DIORH_RAPPORT_TOP_10.rdl"},
+            {application: "DIORH", rapport: "Etudes Evolution Carrière.rdl"},
+            {application: "DIORH", rapport: "Liste Anciennete GF NR.rdl"},
+            {application: "DIORH", rapport: "Liste L0.rdl"},
+            {application: "DIORH", rapport: "POC_Suivi_formation.rdl"},
+            {application: "DIORH", rapport: "Promotion suite à mobilité.rdl"},
+            {application: "DIORH", rapport: "Rapport_Check_DIORH_SIDSI_FER.rdl"},
+            {application: "DIORH", rapport: "réalisation1.rdl"},
+            {application: "DIORH", rapport: "Requête DF.rdl"},
+            {application: "DIORH", rapport: "Suivi BIF.rdl"},
+            {application: "DIORH", rapport: "TdB_Suivi_formation1.1.rdl"},
+            {application: "SIDT", rapport: "toto.rdl"},
+            {application: "SIDT", rapport: "tata.rdl"}
+        ];
+        
+        //console.log(counts);
+
         var config = {
             earth: {
                 radius: 1,
@@ -51,20 +64,16 @@
             }
         };
 
-        var createScene = function () {
+        var createScene = function (data) {
             var scene = new BABYLON.Scene(engine);
-            // var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0.5, 0.7, 5, new BABYLON.Vector3(5, 5, 10), scene);
-            
-            // camera.attachControl(canvas, true);
-        
-            // camera.lowerRadiusLimit = 2.5;
-            // camera.upperRadiusLimit = 10;
-            // camera.pinchDeltaPercentage = 0.01;
-            // camera.wheelDeltaPercentage = 0.01;
 
-            // var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(5, 0, -12), scene);	
+            // var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(0, 10, 0), scene);	
 			// camera.speed = 0.1;
 			// camera.angularSensibility = 1500;
+            // camera.lowerRadiusLimit = 1.5;
+            // camera.upperRadiusLimit = 20;
+            // camera.pinchDeltaPercentage = 0.01;
+            // camera.wheelDeltaPercentage = 0.01;
 			
 			// camera.keysUp = [90]; // Touche Z
 			// camera.keysDown = [83]; // Touche S
@@ -75,19 +84,17 @@
             var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, 3*Math.PI / 7, 110, new BABYLON.Vector3(55, 5, 55), scene);
             scene.activeCamera = camera;
             camera.attachControl(canvas, true);
-            camera.lowerRadiusLimit = 1.5;
+            camera.lowerRadiusLimit = 2;
             camera.upperRadiusLimit = 10;
             camera.pinchDeltaPercentage = 0.01;
             camera.wheelDeltaPercentage = 0.01;
         
             scene.clearColor = new BABYLON.Color3(0.0, 0.0, 0.0);
         
-            //var planet = BABYLON.Mesh.CreateSphere("planet", 16, 5, scene);
             var earth = BABYLON.Mesh.CreateSphere("planet", config.earth.vertexes, config.earth.radius, scene);
-            //earth.position = new BABYLON.Vector3(3, 3, 10);
             earth.position = new BABYLON.Vector3(10, 0, 5);
             earth.rotation.z = Math.PI;
-            //planet.parent = sun;
+            earth.rotation.y = 1;
             
             var planetMat = new BABYLON.StandardMaterial("planetSurface", scene);
             planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/2k_earth_daymap.jpg", scene);
@@ -97,7 +104,7 @@
 
             var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius, scene);
             moon.parent = earth;
-            moon.position = new BABYLON.Vector3(1, -0.5, 1);
+            moon.position = new BABYLON.Vector3(1, -0.2, 0.5);
 
             var moonMat = new BABYLON.StandardMaterial("moonMat", scene);
             moonMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon.jpg", scene);
@@ -107,15 +114,56 @@
 
             camera.target = earth;
 
-            var light = new BABYLON.PointLight("DirLight", new BABYLON.Vector3(0, 10, 0), scene);
+            // Definition: https://assets.babylonjs.com/particles/systems/sun.json
+            BABYLON.ParticleHelper.CreateAsync("sun", scene, true).then(function(set){ 
+                set.start();
+            });
+
+            var light = new BABYLON.PointLight("DirLight", new BABYLON.Vector3(0, 0, 0), scene);
 			light.diffuse = new BABYLON.Color3(1, 1, 1);
 			light.specular = new BABYLON.Color3(0.6, 0.6, 0.6);
-			light.intensity = 1.5;
-
-            // Lets create a sun effect made of 3 different particle system
-            // Definition: https://assets.babylonjs.com/particles/systems/sun.json
-            BABYLON.ParticleHelper.CreateAsync("sun", scene, true).then(function(set){ return set.start()});
+			light.intensity = 2;
         
+            var alpha = Math.PI;
+            scene.beforeRender = function () {
+                earth.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, 10 * Math.cos(alpha));
+                earth.rotation.y += .01;
+
+                //moon.rotation.y -= .05;
+                alpha += 0.005;
+            };
+            
+            // GUI
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("ui1");
+
+            var panel = new BABYLON.GUI.StackPanel();  
+            panel.width = 0.25;
+            panel.rotation = 0.2;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            advancedTexture.addControl(panel);
+
+            var createLabel = function(mesh, data) {
+                var label = new BABYLON.GUI.Rectangle("label for " + mesh.name);
+                label.background = "black"
+                label.height = "30px";
+                label.alpha = 0.5;
+                label.width = "100px";
+                label.cornerRadius = 20;
+                label.thickness = 1;
+                label.linkOffsetY = 80;
+                advancedTexture.addControl(label); 
+                label.linkWithMesh(mesh);
+
+                var text1 = new BABYLON.GUI.TextBlock();
+                var counts = _.countBy(data,'application');
+                var appName = data[0].application;
+                text1.text = appName + ': ' + counts.DIORH;
+                text1.color = "white";
+                label.addControl(text1);  
+            } 
+
+            createLabel(earth, data);
+
             return scene;
         }
 
@@ -123,8 +171,6 @@
 			// Création d'une material
 			var sMaterial = new BABYLON.StandardMaterial("skyboxMaterial", scene);
 			sMaterial.backFaceCulling = false;
-			//sMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/skybox", scene);
-            //sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/BabylonJS_FirstScene/master/images/skybox/skybox", scene);
             sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/skybox/skybox", scene);
 			sMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             sMaterial.disableLighting = true;
@@ -136,12 +182,11 @@
 
         var canvas = document.getElementById("renderCanvas");
         var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
-        var scene = createScene();
+        var scene = createScene(catalog);
         createSkybox(scene);
 
         engine.runRenderLoop(function () {
             if (scene) {
-                //earth.rotation.y += 0.001;
                 scene.render();
             }
         });
