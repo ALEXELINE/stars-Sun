@@ -95,9 +95,10 @@
             earth.position = new BABYLON.Vector3(10, 0, 5);
             earth.rotation.z = Math.PI;
             earth.rotation.y = 1;
+            earth.renderingGroupId = 3;
             
             var planetMat = new BABYLON.StandardMaterial("planetSurface", scene);
-            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/2k_earth_daymap.jpg", scene);
+            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_earth_daymap.jpg", scene);
             earth.material = planetMat
             earth.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
             earth.material.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -105,11 +106,12 @@
             var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius, scene);
             moon.parent = earth;
             moon.position = new BABYLON.Vector3(1, -0.2, 0.5);
+            moon.renderingGroupId = 3;
 
             var moonMat = new BABYLON.StandardMaterial("moonMat", scene);
-            moonMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon.jpg", scene);
-            moonMat.bumpTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon_bump.jpg", scene);
-            moonMat.specularTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/moon_spec.jpg", scene);
+            moonMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon.jpg", scene);
+            moonMat.bumpTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_bump.jpg", scene);
+            moonMat.specularTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_spec.jpg", scene);
             moon.material = moonMat;
 
             camera.target = earth;
@@ -171,7 +173,7 @@
 			// Création d'une material
 			var sMaterial = new BABYLON.StandardMaterial("skyboxMaterial", scene);
 			sMaterial.backFaceCulling = false;
-            sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/skybox/skybox", scene);
+            sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/skybox/universe/skybox", scene);
 			sMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             sMaterial.disableLighting = true;
             
