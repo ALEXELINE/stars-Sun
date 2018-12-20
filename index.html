@@ -53,7 +53,7 @@
 
         var config = {
             features: {
-                introduction: false
+                introduction: true
             },
             meshes: [
                 {
@@ -268,10 +268,6 @@
 
             //createLabel(planets[0], data);
 
-            var distanceFromObject = function(mesh, cam){
-                return  mesh.position.subtract(cam.position).length();
-            }
-
             var introductionSceneEnded = false;
             var introductionSceneRunning = 0;
             var introductionScene = function(mesh, cam){
@@ -286,7 +282,6 @@
                         scene.activeCamera = camera;
                         var i = planets.length - 1;
                         camera.target = mesh;
-                        //camera.target = planets[i];
                         createLabel(mesh, data);
                     }
                 }
@@ -303,7 +298,6 @@
                         }
                         else
                         {
-                            
                             planet.position = new BABYLON.Vector3(10 * Math.cos(alpha) * index * -1, 0, 10 * Math.sin(alpha) * index * -1);
                         }
                             
