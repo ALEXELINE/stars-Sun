@@ -50,71 +50,182 @@
             {application: "SIDT", rapport: "toto.rdl"},
             {application: "SIDT", rapport: "tata.rdl"}
         ];
-        
-        //console.log(counts);
 
         var config = {
-            earth: {
-                radius: 1,
-                vertexes: 25
+            features: {
+                introduction: true
             },
-            moon: {
-                radius: 0.2,
-                vertexes: 25
-            }
+            meshes: [
+                {
+                    name: "ceres",
+                    radius: 1,
+                    vertexes: 25,
+                    material: {
+                        diffuse: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_ceres_fictional.jpg",
+                            //texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_makemake_fictional.jpg",
+                            color: new BABYLON.Color3(1, 1, 1)
+                        },
+                        specular: {
+                            color: new BABYLON.Color3(0, 0, 0)
+                        },
+                        bump: {}
+                    },
+                    position: new BABYLON.Vector3(10, 0, 5),
+                    rotation: {y: 1, z: Math.PI},
+                    renderingGroupId: 3,
+                    camera: "default"
+                },
+                {
+                    name: "moon",
+                    parent: "ceres",
+                    radius: 0.2,
+                    vertexes: 25,
+                    material: {
+                        diffuse: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon.jpg"
+                        },
+                        bump: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_bump.jpg",
+                        },
+                        specular: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_spec.jpg"
+                        }
+                    },
+                    position: new BABYLON.Vector3(1, -0.2, 0.5),
+                    rotation: {},
+                    renderingGroupId: 3
+                },
+                {
+                    name: "eris",
+                    radius: 2,
+                    vertexes: 25,
+                    material: {
+                        diffuse: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_eris_fictional.jpg",
+                            color: new BABYLON.Color3(1, 1, 1)
+                        },
+                        specular: {
+                            color: new BABYLON.Color3(0, 0, 0)
+                        },
+                        bump: {}
+                    },
+                    position: new BABYLON.Vector3(15, 0, 5),
+                    rotation: {y: 1, z: Math.PI},
+                    renderingGroupId: 3,
+                    camera: "default"
+                },
+                {
+                    name: "haumea",
+                    radius: 2,
+                    vertexes: 25,
+                    material: {
+                        diffuse: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_haumea_fictional.jpg",
+                            color: new BABYLON.Color3(1, 1, 1)
+                        },
+                        specular: {
+                            color: new BABYLON.Color3(0, 0, 0)
+                        },
+                        bump: {}
+                    },
+                    position: new BABYLON.Vector3(15, 0, 5),
+                    rotation: {y: 1, z: Math.PI},
+                    renderingGroupId: 3,
+                    camera: "default"
+                },
+                {
+                    name: "makemake",
+                    radius: 2,
+                    vertexes: 25,
+                    material: {
+                        diffuse: {
+                            texture: "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_makemake_fictional.jpg",
+                            color: new BABYLON.Color3(1, 1, 1)
+                        },
+                        specular: {
+                            color: new BABYLON.Color3(0, 0, 0)
+                        },
+                        bump: {}
+                    },
+                    position: new BABYLON.Vector3(15, 0, 5),
+                    rotation: {y: 1, z: Math.PI},
+                    renderingGroupId: 3,
+                    camera: "default"
+                }
+            ]
         };
+
+        var planetBuilder = function(mesh, scene){
+            var planet = BABYLON.Mesh.CreateSphere(mesh.name, mesh.vertexes, mesh.radius, scene);
+            planet.position = mesh.position;
+            planet.rotation.y = ('y' in mesh.rotation) ? mesh.rotation.y : 0
+            planet.rotation.z = ('z' in mesh.rotation) ? mesh.rotation.z : 0
+            planet.renderingGroupId = ('renderingGroupId' in mesh) ? mesh.renderingGroupId : 3;
+
+            var planetMat = new BABYLON.StandardMaterial(mesh.name + "Surface", scene);
+            planetMat.diffuseTexture = ('texture' in mesh.material.diffuse) ? new BABYLON.Texture(mesh.material.diffuse.texture, scene): null;
+            planetMat.bumpTexture = ('texture' in mesh.material.bump) ? new BABYLON.Texture(mesh.material.bump.texture, scene): null;
+            planetMat.specularTexture = ('texture' in mesh.material.specular) ? new BABYLON.Texture(mesh.material.specular.texture, scene): null;
+            planet.material = planetMat;
+
+            if(mesh.material.diffuse.color)
+                planet.material.diffuseColor  = mesh.material.diffuse.color;
+            if(mesh.material.specular.color)
+                planet.material.specularColor = mesh.material.specular.color;
+
+            // planet.checkCollisions = true;
+
+            return planet;
+        }
+
+        var initCamera = function(canvas, type){
+            var camera;
+            if(type == 'FreeCamera'){
+                camera = new BABYLON.FreeCamera("FCamera", new BABYLON.Vector3(-8.4, 0, 0), scene);
+                camera.rotation.y = Math.PI/1.35;
+            }                
+            else{
+                camera = new BABYLON.ArcRotateCamera("ACamera", -Math.PI / 2, 3*Math.PI / 7, 110, new BABYLON.Vector3(55, 5, 55), scene);
+                camera.attachControl(canvas, true);
+            }
+            
+            if(!config.features.introduction) camera.attachControl(canvas, true);
+			
+            camera.speed = 0.1;
+            camera.lowerRadiusLimit = 2.3;
+            camera.upperRadiusLimit = 7;
+            camera.pinchDeltaPercentage = 0.01;
+            camera.wheelDeltaPercentage = 0.01;
+            camera.angularSensibility = 1500;
+            
+            //camera.ellipsoid = new BABYLON.Vector3(50, 50, 50);
+            //camera.checkCollisions = true;
+			
+			camera.keysUp = [90]; // Touche Z
+			camera.keysDown = [83]; // Touche S
+			camera.keysLeft = [81]; // Touche Q
+			camera.keysRight = [68]; // Touche D;
+
+            return camera;
+        }
 
         var createScene = function (data) {
             var scene = new BABYLON.Scene(engine);
 
-            // var camera = new BABYLON.FreeCamera("MainCamera", new BABYLON.Vector3(0, 10, 0), scene);	
-			// camera.speed = 0.1;
-			// camera.angularSensibility = 1500;
-            // camera.lowerRadiusLimit = 1.5;
-            // camera.upperRadiusLimit = 20;
-            // camera.pinchDeltaPercentage = 0.01;
-            // camera.wheelDeltaPercentage = 0.01;
-			
-			// camera.keysUp = [90]; // Touche Z
-			// camera.keysDown = [83]; // Touche S
-			// camera.keysLeft = [81]; // Touche Q
-			// camera.keysRight = [68]; // Touche D;
-            // scene.activeCamera.attachControl(canvas);
-            
-            var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, 3*Math.PI / 7, 110, new BABYLON.Vector3(55, 5, 55), scene);
+            var camera = initCamera(canvas, 'FreeCamera');
             scene.activeCamera = camera;
-            camera.attachControl(canvas, true);
-            camera.lowerRadiusLimit = 2;
-            camera.upperRadiusLimit = 10;
-            camera.pinchDeltaPercentage = 0.01;
-            camera.wheelDeltaPercentage = 0.01;
-        
+            //var attachedCamera = false;
+
             scene.clearColor = new BABYLON.Color3(0.0, 0.0, 0.0);
-        
-            var earth = BABYLON.Mesh.CreateSphere("planet", config.earth.vertexes, config.earth.radius, scene);
-            earth.position = new BABYLON.Vector3(10, 0, 5);
-            earth.rotation.z = Math.PI;
-            earth.rotation.y = 1;
-            earth.renderingGroupId = 3;
             
-            var planetMat = new BABYLON.StandardMaterial("planetSurface", scene);
-            planetMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/2k_earth_clouds.jpg", scene);
-            earth.material = planetMat
-            earth.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-            earth.material.specularColor = new BABYLON.Color3(0, 0, 0);
-
-            var moon = BABYLON.Mesh.CreateSphere("moon", config.moon.vertexes, config.moon.radius, scene);
-            moon.parent = earth;
-            moon.position = new BABYLON.Vector3(1, -0.2, 0.5);
-            moon.renderingGroupId = 3;
-
-            var moonMat = new BABYLON.StandardMaterial("moonMat", scene);
-            moonMat.diffuseTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon.jpg", scene);
-            moonMat.bumpTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_bump.jpg", scene);
-            moonMat.specularTexture = new BABYLON.Texture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/textures/planet/moon_spec.jpg", scene);
-            moon.material = moonMat;
-
-            camera.target = earth;
+            var planets = [];
+            config.meshes.forEach(mesh => {
+                var planet = planetBuilder(mesh, scene);
+                if(mesh.parent)
+                    planet.parent = planets.find(function(p){ return p.id = mesh.parent; });
+                planets.push(planet);
+            });
 
             // Definition: https://assets.babylonjs.com/particles/systems/sun.json
             BABYLON.ParticleHelper.CreateAsync("sun", scene, true).then(function(set){ 
@@ -125,15 +236,6 @@
 			light.diffuse = new BABYLON.Color3(1, 1, 1);
 			light.specular = new BABYLON.Color3(0.6, 0.6, 0.6);
 			light.intensity = 2;
-        
-            var alpha = Math.PI;
-            scene.beforeRender = function () {
-                earth.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, 10 * Math.cos(alpha));
-                earth.rotation.y += .01;
-
-                //moon.rotation.y -= .05;
-                alpha += 0.005;
-            };
             
             // GUI
             var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("ui1");
@@ -164,20 +266,64 @@
                 label.addControl(text1);  
             } 
 
-            createLabel(earth, data);
+            //createLabel(planets[0], data);
+
+            var distanceFromObject = function(mesh, cam){
+                return  mesh.position.subtract(cam.position).length();
+            }
+
+            var introductionSceneEnded = false;
+            var introductionSceneRunning = 0;
+            var introductionScene = function(mesh, cam){
+                var distance = mesh.position.subtract(cam.position).length();
+                if(distance < 13){
+                    introductionSceneRunning = 1;
+                    camera.rotation.y += 1/distance/30;
+                }else{
+                    if(introductionSceneRunning > 0){
+                        introductionSceneEnded = true;
+                        camera = initCamera(canvas);
+                        scene.activeCamera = camera;
+                        var i = planets.length - 1;
+                        camera.target = mesh;
+                        //camera.target = planets[i];
+                        createLabel(mesh, data);
+                    }
+                }
+            }
+
+            var alpha = Math.PI;
+            scene.beforeRender = function () {
+                if(config.features.introduction && !introductionSceneEnded)
+                    introductionScene(planets[0], camera);
+                planets.forEach(function(planet, index){
+                    if(!planet.parent){
+                        if(index == 0){
+                            planet.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, 10 * Math.cos(alpha));
+                        }
+                        else
+                        {
+                            
+                            planet.position = new BABYLON.Vector3(10 * Math.cos(alpha) * index * -1, 0, 10 * Math.sin(alpha) * index * -1);
+                        }
+                            
+                        //planet.position = new BABYLON.Vector3(10 * Math.sin(alpha*index) * (Math.pow(index, index)), 0, 10 * Math.cos(alpha*index) * Math.pow(index, index));
+                        planet.rotation.y += .01 * (index + 1);
+                    }
+                });
+                alpha += 0.005; 
+            };
 
             return scene;
         }
 
         function createSkybox(scene) {
-			// Création d'une material
 			var sMaterial = new BABYLON.StandardMaterial("skyboxMaterial", scene);
 			sMaterial.backFaceCulling = false;
             sMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/Servletparty/stars-Sun/master/skybox/universe/skybox", scene);
 			sMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             sMaterial.disableLighting = true;
             
-			// Création d'un cube avec la material adaptée
 			var skybox = BABYLON.Mesh.CreateBox("skybox", 250, scene);
 			skybox.material = sMaterial;
 		}
