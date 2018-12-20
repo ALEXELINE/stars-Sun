@@ -24,7 +24,7 @@
         "radiusRange": 0,
         "directionRandomizer": 0
       },
-      "textureName": "start/T_Surface.png",
+      "textureName": "star/T_Surface.png",
       "animations": [],
       "minAngularSpeed": -0.4,
       "maxAngularSpeed": 0.4,
