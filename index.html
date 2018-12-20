@@ -227,10 +227,6 @@
                 planets.push(planet);
             });
 
-            // Definition: https://assets.babylonjs.com/particles/systems/sun.json
-            // BABYLON.ParticleHelper.CreateAsync("sun", scene, true).then(function(set){ 
-            //     set.start();
-            // });
             BABYLON.ParticleHelper.BaseAssetsUrl = "https://raw.githubusercontent.com/Servletparty/stars-Sun/master/particles";
             BABYLON.ParticleHelper.CreateAsync("blueStar", scene, true).then(function(set){ 
                 set.start();
